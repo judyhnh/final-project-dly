@@ -87,7 +87,7 @@ const formContainer = css`
     font-weight: bold;
     letter-spacing: 4px;
     color: white;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: black;
     border: 3px solid white;
     cursor: pointer;
   }
