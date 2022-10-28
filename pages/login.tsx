@@ -70,8 +70,9 @@ const formContainer = css`
     font-size: 15px;
     background-color: transparent;
   }
+
   input:focus {
-    outline: none;
+    outline: 2px solid gold;
   }
 
   label {
@@ -110,7 +111,7 @@ export default function Register() {
 
       <div css={registerWrapper}>
         <div css={registerStyleRight}>
-          <h1>Please log in</h1>
+          <h1>Please sign in</h1>
 
           <div css={formContainer}>
             <form className="formStyle">

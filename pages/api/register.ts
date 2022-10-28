@@ -1,5 +1,6 @@
+import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getUserByUsername } from '../../database/users';
+import { createUser, getUserByUsername } from '../../database/users';
 
 export type RegisterResponseBody =
   | { errors: { message: string }[] }
@@ -32,7 +33,18 @@ export default async function handler(
         .json({ errors: [{ message: 'Username is already taken ☹︎' }] });
     }
 
-    response.status(200).json({ user: { username: 'judy' } });
+    // hash pw
+    const passwordHash = await bcrypt.hash(request.body.password, 12);
+
+    const userWithoutPassword = await createUser(
+      request.body.username,
+      passwordHash,
+      request.body.email,
+    );
+
+    response
+      .status(200)
+      .json({ user: { username: userWithoutPassword.username } });
   } else {
     response.status(401).json({ errors: [{ message: 'Method prohibited.' }] });
   }

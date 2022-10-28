@@ -87,7 +87,7 @@ const formContainer = css`
     background: transparent;
   }
   input:focus {
-    outline: none;
+    outline: 2px solid gold;
   }
 
   label {
