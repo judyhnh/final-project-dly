@@ -10,9 +10,26 @@ function MyApp({ Component, pageProps }) {
           @import url(https://fonts.googleapis.com/css?family=Permanent+Marker);
           body,
           html {
-            background-color: #fff9f0;
             font-family: 'Permanent Marker';
             margin: 0;
+
+            color: #333;
+            background: repeating-linear-gradient(
+                  90deg,
+                  #f0f0f0 0,
+                  #f0f0f0 5%,
+                  transparent 0,
+                  transparent 50%
+                )
+                0 / 15px 15px,
+              repeating-linear-gradient(
+                  180deg,
+                  #f0f0f0 0,
+                  #f0f0f0 5%,
+                  transparent 0,
+                  transparent 50%
+                )
+                0 / 15px 15px;
           }
           *,
           *::before,

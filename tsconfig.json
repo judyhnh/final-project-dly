@@ -3,6 +3,7 @@
   "extends": "@upleveled/eslint-config-upleveled/tsconfig.base.json",
   "compilerOptions": {
     "jsxImportSource": "@emotion/react",
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "types": ["node", "react-emotion"]
   }
 }

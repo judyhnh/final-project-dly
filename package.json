@@ -10,6 +10,9 @@
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
+    "@types/dotenv-safe": "^8.1.2",
+    "dotenv-safe": "^8.2.0",
+    "ley": "^0.8.1",
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
