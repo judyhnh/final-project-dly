@@ -3,6 +3,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import { RegisterResponseBody } from './api/register';
 
 const mainWrapper = css`
   width: 100vw;
@@ -10,6 +11,7 @@ const mainWrapper = css`
   background-color: rgba(255, 215, 0, 0.5);
   margin-top: 100px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+  border: 3px solid black;
 `;
 
 const registerWrapper = css`
@@ -98,9 +100,24 @@ const formContainer = css`
   }
 `;
 
-export default function Register() {
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
+  async function loginHandler() {
+    const loginResponse = await fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        password,
+        email,
+      }),
+    });
+    const registerResponseBody = await loginResponse.json();
+  }
 
   return (
     <div css={mainWrapper}>
@@ -147,7 +164,13 @@ export default function Register() {
                 />
               </label>
 
-              <button>LOGIN</button>
+              <button
+                onClick={async () => {
+                  await loginHandler();
+                }}
+              >
+                LOGIN
+              </button>
             </form>
           </div>
           <p>

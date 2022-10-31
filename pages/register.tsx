@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { RegisterResponseBody } from './api/register';
 
 const mainWrapper = css`
   width: 100vw;
@@ -11,6 +12,7 @@ const mainWrapper = css`
   background-color: rgba(255, 215, 0, 0.5);
   margin-top: 100px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
+  border: 3px solid black;
 `;
 
 const registerWrapper = css`
@@ -19,9 +21,23 @@ const registerWrapper = css`
   grid-template-rows: auto;
   grid-template-areas:
     '. image side arrow'
-    '. image side arrow'
-    '. image . .'
+    'text image side arrow'
+    'text image . .'
     '. image . .';
+`;
+const textSide = css`
+  grid-area: text;
+  padding: 30px;
+  width: 200px;
+  height: 200px;
+  margin-left: 200px;
+  margin-top: 100px;
+  font-size: 20px;
+  background-color: gold;
+  border: 5px dotted black;
+  text-align: center;
+  letter-spacing: 2px;
+  border-radius: 20px;
 `;
 const arrowRight = css`
   grid-area: arrow;
@@ -131,7 +147,8 @@ export default function Register() {
         email,
       }),
     });
-    const registerResponseBody = await registerResponse.json();
+    const registerResponseBody =
+      (await registerResponse.json()) as RegisterResponseBody;
   }
 
   const handleSubmit = (event) => {
@@ -148,6 +165,7 @@ export default function Register() {
       </Head>
 
       <div css={registerWrapper}>
+        <div css={textSide}>Keep a diary, and someday it will keep you.</div>
         <div css={imageLeft}>
           <Image
             src="/registerImage.svg"
@@ -221,8 +239,8 @@ export default function Register() {
               </label>
 
               <button
-                onClick={() => {
-                  registerHandler();
+                onClick={async () => {
+                  await registerHandler();
                 }}
               >
                 SUBMIT
