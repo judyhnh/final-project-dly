@@ -1,9 +1,12 @@
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
-import { RegisterResponseBody } from './api/register';
+import { getValidSessionByToken } from '../database/sessions';
+import { LoginResponseBody } from './api/login';
 
 const mainWrapper = css`
   width: 100vw;
@@ -28,15 +31,12 @@ const registerStyleRight = css`
     letter-spacing: 5px;
   }
   a {
-    color: black;
+    color: blue;
     letter-spacing: 3px;
     text-decoration: none;
-    border: 1.5px solid black;
-    padding: 3px 5px;
-    border-radius: 10px;
   }
   a:hover {
-    border: 1.5px dashed blue;
+    text-decoration: underline;
   }
 `;
 
@@ -100,9 +100,16 @@ const formContainer = css`
   }
 `;
 
-export default function Login() {
+type Props = {
+  refreshUserProfile: () => Promise<void>;
+};
+
+export default function Login(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ message: string }[]>([]);
+
+  const router = useRouter();
 
   async function loginHandler() {
     const loginResponse = await fetch('/api/login', {
@@ -111,12 +118,29 @@ export default function Login() {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        username,
+        username: username.toLowerCase(),
         password,
-        email,
       }),
     });
-    const registerResponseBody = await loginResponse.json();
+    const loginResponseBody = (await loginResponse.json()) as LoginResponseBody;
+
+    if ('errors' in loginResponseBody) {
+      setErrors(loginResponseBody.errors);
+      return console.log(loginResponseBody.errors);
+    }
+    console.log(router.query.returnTo);
+    const returnTo = router.query.returnTo;
+
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
+    ) {
+      await props.refreshUserProfile();
+      return await router.push(returnTo);
+    }
+    await props.refreshUserProfile();
+    await router.push(`/profile/${loginResponseBody.user.username}`);
   }
 
   return (
@@ -129,6 +153,9 @@ export default function Login() {
       <div css={registerWrapper}>
         <div css={registerStyleRight}>
           <h1>Please sign in</h1>
+          {errors.map((error) => {
+            return <p key={error.message}>ERROR: {error.message}</p>;
+          })}
 
           <div css={formContainer}>
             <form className="formStyle">
@@ -143,7 +170,7 @@ export default function Login() {
                   placeholder="Username"
                   value={username}
                   onChange={(event) => {
-                    setUsername(event.currentTarget.value);
+                    setUsername(event.currentTarget.value.toLowerCase());
                   }}
                 />
               </label>
@@ -157,6 +184,7 @@ export default function Login() {
                 />
                 <input
                   placeholder="Password"
+                  type="password"
                   value={password}
                   onChange={(event) => {
                     setPassword(event.currentTarget.value);
@@ -180,4 +208,21 @@ export default function Login() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const token = context.req.cookies.sessionToken;
+
+  if (token && (await getValidSessionByToken(token))) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

@@ -1,6 +1,10 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { createSession } from '../../database/sessions';
 import { getUserWithPasswordHashByUsername } from '../../database/users';
+import { createSerializedRegisterSessionTokenCookie } from '../../utils/cookies';
+import { createCsrfSecret } from '../../utils/csrf';
 
 export type LoginResponseBody =
   | { errors: { message: string }[] }
@@ -21,7 +25,7 @@ export default async function handler(
     ) {
       return response
         .status(400)
-        .json({ errors: [{ message: 'Username or password invalid.' }] });
+        .json({ errors: [{ message: 'Username or password invalid. ☹︎' }] });
     }
 
     // get user by username
@@ -43,8 +47,20 @@ export default async function handler(
         .status(401)
         .json({ errors: [{ message: 'Password is not valid.' }] });
     }
+    const secret = await createCsrfSecret();
+    const session = await createSession(
+      user.id,
+      crypto.randomBytes(80).toString('base64'),
+      secret,
+    );
+    const serializedCookie = createSerializedRegisterSessionTokenCookie(
+      session.token,
+    );
 
-    response.status(200).json({ user: { username: user.username } });
+    response
+      .status(200)
+      .setHeader('Set-Cookie', serializedCookie)
+      .json({ user: { username: user.username } });
   } else {
     response.status(401).json({ errors: [{ message: 'Method prohibited.' }] });
   }

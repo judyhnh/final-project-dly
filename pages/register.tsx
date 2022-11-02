@@ -58,15 +58,12 @@ const registerStyleRight = css`
     margin-left: 5px;
   }
   a {
-    color: black;
+    color: blue;
     letter-spacing: 3px;
     text-decoration: none;
-    border: 1.5px solid black;
-    padding: 3px 5px;
-    border-radius: 10px;
   }
   a:hover {
-    border: 1.5px dashed blue;
+    text-decoration: underline;
   }
 `;
 
@@ -142,7 +139,7 @@ export default function Register() {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        username,
+        username: username.toLowerCase(),
         password,
         email,
       }),
@@ -199,7 +196,7 @@ export default function Register() {
                   placeholder="Username"
                   value={username}
                   onChange={(event) => {
-                    setUsername(event.currentTarget.value);
+                    setUsername(event.currentTarget.value.toLowerCase());
                   }}
                 />
               </label>
