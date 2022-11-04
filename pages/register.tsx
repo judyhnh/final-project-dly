@@ -1,9 +1,11 @@
 import { css } from '@emotion/react';
+import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
+import { getValidSessionByToken } from '../database/sessions';
 import { RegisterResponseBody } from './api/register';
 
 const mainWrapper = css`
@@ -126,11 +128,28 @@ const formContainer = css`
   }
 `;
 
-export default function Register() {
+const errorStyle = css`
+  background-color: white;
+  color: red;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-top: 30px;
+  width: 300px;
+`;
+type Props = {
+  refreshUserProfile: () => Promise<void>;
+};
+
+export default function Register(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
 
   async function registerHandler() {
     const registerResponse = await fetch('/api/register', {
@@ -146,13 +165,24 @@ export default function Register() {
     });
     const registerResponseBody =
       (await registerResponse.json()) as RegisterResponseBody;
+
+    if ('errors' in registerResponseBody) {
+      setErrors(registerResponseBody.errors);
+      return console.log(registerResponseBody.errors);
+    }
+
+    const returnTo = router.query.returnTo;
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
+    ) {
+      return await router.push(returnTo);
+    }
+
+    await props.refreshUserProfile();
+    await router.push(`/private-profile`);
   }
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    router.push('/login').catch(() => {});
-  };
 
   return (
     <div css={mainWrapper}>
@@ -182,7 +212,6 @@ export default function Register() {
         </div>
         <div css={registerStyleRight}>
           <h1>Create an Account</h1>
-
           <div css={formContainer}>
             <form className="formStyle" onSubmit={handleSubmit}>
               <label>
@@ -247,8 +276,30 @@ export default function Register() {
           <p>
             Already registered? <Link href="/login">LOGIN</Link> here!
           </p>
+          <div css={errorStyle}>
+            {errors.map((error) => {
+              return <p key={error.message}>ERROR: {error.message}</p>;
+            })}
+          </div>
         </div>
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const token = context.req.cookies.sessionToken;
+
+  if (token && (await getValidSessionByToken(token))) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

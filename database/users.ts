@@ -9,11 +9,12 @@ export type User = {
 
 export async function getUserByUsername(username: string) {
   if (!username) return undefined;
-  const [user] = await sql<User[]>`
+  const [user] = await sql<{ id: number; username: string }[]>`
   SELECT
-    *
+    id,
+    username
   FROM
-    Users
+    users
   WHERE
     users.username = ${username}
   `;
@@ -46,9 +47,28 @@ export async function getUserWithPasswordHashByUsername(username: string) {
   SELECT
     *
   FROM
-    Users
+    users
   WHERE
     users.username = ${username}
+  `;
+
+  return user;
+}
+
+export async function getUserBySessionToken(token: string) {
+  if (!token) return undefined;
+
+  const [user] = await sql<{ id: number; username: string }[]>`
+  SELECT
+    users.id,
+    users.username
+  FROM
+    users,
+    sessions
+  WHERE
+    sessions.token = ${token} AND
+    sessions.user_id = users.id AND
+    sessions.expiry_timestamp > now();
   `;
 
   return user;

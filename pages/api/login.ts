@@ -19,13 +19,12 @@ export default async function handler(
     if (
       typeof request.body.username !== 'string' ||
       typeof request.body.password !== 'string' ||
-      typeof request.body.email !== 'string' ||
       !request.body.username ||
       !request.body.password
     ) {
       return response
         .status(400)
-        .json({ errors: [{ message: 'Username or password invalid. ☹︎' }] });
+        .json({ errors: [{ message: 'Username or password invalid ☹︎' }] });
     }
 
     // get user by username
@@ -33,7 +32,7 @@ export default async function handler(
     if (!user) {
       return response
         .status(401)
-        .json({ errors: [{ message: 'Username not found. ☹︎' }] });
+        .json({ errors: [{ message: 'Username not found ☹︎' }] });
     }
 
     // match hash and pw
@@ -45,7 +44,7 @@ export default async function handler(
     if (!isPasswordValid) {
       return response
         .status(401)
-        .json({ errors: [{ message: 'Password is not valid.' }] });
+        .json({ errors: [{ message: 'Password is not valid ☹︎' }] });
     }
     const secret = await createCsrfSecret();
     const session = await createSession(

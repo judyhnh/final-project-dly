@@ -13,6 +13,7 @@ const headerWrapper = css`
   }
 
   .navRight {
+    display: flex;
     margin: 5px 70px 0 auto;
 
     a {
@@ -39,8 +40,54 @@ const headerWrapper = css`
     margin-top: 50px;
   }
 `;
+const usernameStyle = css`
+  display: flex;
+  font-size: 15px;
+  margin-top: 40px;
+  margin-right: 10px;
 
-export default function Header() {
+  a {
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+`;
+
+const userDropDown = css`
+  position: relative;
+
+  .dropDownMenu {
+    position: absolute;
+    font-size: 15px;
+    left: 0;
+    top: calc(65% + 0.25rem);
+    background-color: white;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
+    transform: translateY(-10px);
+    pointer-events: none;
+  }
+
+  > a + .dropDownMenu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+`;
+
+function Anchor({ children, ...restProps }) {
+  return <a {...restProps}>{children}</a>;
+}
+
+export default function Header(props) {
   return (
     <header>
       <nav>
@@ -87,16 +134,26 @@ export default function Header() {
                 />
               </a>
             </Link>
-            <Link href="/">
-              <a>
-                <Image
-                  src="/user.svg"
-                  alt="icon of a user in minimalist style"
-                  width="35"
-                  height="35"
-                />
-              </a>
-            </Link>
+            <div css={userDropDown}>
+              <Link href="/">
+                <a>
+                  <Image
+                    src="/user.svg"
+                    alt="icon of a user in minimalist style"
+                    width="35"
+                    height="35"
+                  />
+                </a>
+              </Link>
+              <div className="dropDownMenu">
+                {props.user ? (
+                  <Anchor href="/logout">Logout</Anchor>
+                ) : (
+                  <a href="/login">Login</a>
+                )}
+              </div>
+            </div>
+            <div css={usernameStyle}>{props.user && props.user.username}</div>
           </div>
         </div>
       </nav>

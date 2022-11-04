@@ -100,6 +100,15 @@ const formContainer = css`
   }
 `;
 
+const errorStyle = css`
+  background-color: white;
+  color: red;
+  letter-spacing: 3px;
+  text-align: center;
+  margin-top: 30px;
+  width: 300px;
+`;
+
 type Props = {
   refreshUserProfile: () => Promise<void>;
 };
@@ -110,6 +119,10 @@ export default function Login(props: Props) {
   const [errors, setErrors] = useState<{ message: string }[]>([]);
 
   const router = useRouter();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
 
   async function loginHandler() {
     const loginResponse = await fetch('/api/login', {
@@ -140,25 +153,21 @@ export default function Login(props: Props) {
       return await router.push(returnTo);
     }
     await props.refreshUserProfile();
-    await router.push(`/profile/${loginResponseBody.user.username}`);
+    await router.push(`/private-profile`);
   }
 
   return (
     <div css={mainWrapper}>
       <Head>
-        <title>Register</title>
+        <title>Login</title>
         <meta name="description" content="Login to Daily" />
       </Head>
 
       <div css={registerWrapper}>
         <div css={registerStyleRight}>
           <h1>Please sign in</h1>
-          {errors.map((error) => {
-            return <p key={error.message}>ERROR: {error.message}</p>;
-          })}
-
           <div css={formContainer}>
-            <form className="formStyle">
+            <form className="formStyle" onSubmit={handleSubmit}>
               <label>
                 <Image
                   src="/user.svg"
@@ -204,6 +213,11 @@ export default function Login(props: Props) {
           <p>
             No Account yet? <Link href="/register">Register</Link> here!
           </p>
+          <div css={errorStyle}>
+            {errors.map((error) => {
+              return <p key={error.message}>ERROR: {error.message}</p>;
+            })}
+          </div>
         </div>
       </div>
     </div>
