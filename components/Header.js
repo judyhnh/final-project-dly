@@ -40,102 +40,71 @@ const headerWrapper = css`
     margin-top: 50px;
   }
 `;
-const usernameStyle = css`
-  display: flex;
-  font-size: 15px;
-  margin-top: 40px;
-  margin-right: 10px;
 
+const registerStyle = css`
+  font-size: 30px;
+  letter-spacing: 5px;
+  height: 40px;
+  padding: 10px;
   a {
     text-decoration: none;
+    color: black;
   }
   a:hover {
-    text-decoration: underline;
+    color: blue;
   }
 `;
-
-const userDropDown = css`
-  position: relative;
-
-  .dropDownMenu {
-    position: absolute;
-    font-size: 15px;
-    left: 0;
-    top: calc(65% + 0.25rem);
-    background-color: white;
-    padding: 0.75rem;
-    border-radius: 0.25rem;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    transition: opacity 150ms ease-in-out, transform 150ms ease-in-out;
-    transform: translateY(-10px);
-    pointer-events: none;
-  }
-
-  > a + .dropDownMenu {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-  }
-  a {
-    color: black;
-    text-decoration: none;
-  }
-`;
-
-function Anchor({ children, ...restProps }) {
-  return <a {...restProps}>{children}</a>;
-}
 
 export default function Header(props) {
   return (
     <header>
-      <nav>
-        <div css={headerWrapper}>
-          <div className="navLeft">
-            <Link href="/">DLY</Link>
-            <div className="logo">
-              <Image
-                src="/vectorHeader.png"
-                alt="curvy arrow pointing to the right direction"
-                width="250"
-                height="50"
-              />
+      {props.user ? (
+        <nav>
+          <div css={headerWrapper}>
+            <div className="navLeft">
+              <Link href="/">DLY</Link>
+              <div className="logo">
+                <Image
+                  src="/vectorHeader.png"
+                  alt="curvy arrow pointing to the right direction"
+                  width="250"
+                  height="50"
+                />
+              </div>
             </div>
-          </div>
-          <div className="navRight">
-            <Link href="/">
-              <a>
-                <Image
-                  src="/note.svg"
-                  alt="icon of a notepad with a pencil in comic style"
-                  width="35"
-                  height="35"
-                />
-              </a>
-            </Link>
-            <Link href="/">
-              <a>
-                <Image
-                  src="/calendar.svg"
-                  alt="icon of a calendar in comic style"
-                  width="35"
-                  height="35"
-                />
-              </a>
-            </Link>
-            <Link href="/">
-              <a>
-                <Image
-                  src="/setting.svg"
-                  alt="icon of a wheel in comic style"
-                  width="35"
-                  height="35"
-                />
-              </a>
-            </Link>
-            <div css={userDropDown}>
+            <div className="navRight">
               <Link href="/">
+                <a>
+                  <Image
+                    src="/note.svg"
+                    alt="icon of a notepad with a pencil in comic style"
+                    width="35"
+                    height="35"
+                  />
+                </a>
+              </Link>
+              <Link href="/">
+                <a>
+                  <Image
+                    src="/calendar.svg"
+                    alt="icon of a calendar in comic style"
+                    width="35"
+                    height="35"
+                  />
+                </a>
+              </Link>
+              <Link href="/">
+                <a>
+                  <Image
+                    src="/setting.svg"
+                    alt="icon of a wheel in comic style"
+                    width="35"
+                    height="35"
+                  />
+                </a>
+              </Link>
+
+              <Link href="/private-profile">
                 <a>
                   <Image
                     src="/user.svg"
@@ -145,18 +114,33 @@ export default function Header(props) {
                   />
                 </a>
               </Link>
-              <div className="dropDownMenu">
-                {props.user ? (
-                  <Anchor href="/logout">Logout</Anchor>
-                ) : (
-                  <a href="/login">Login</a>
-                )}
+            </div>
+          </div>
+        </nav>
+      ) : (
+        <header>
+          <nav>
+            <div css={headerWrapper}>
+              <div className="navLeft">
+                <Link href="/">DLY</Link>
+                <div className="logo">
+                  <Image
+                    src="/vectorHeader.png"
+                    alt="curvy arrow pointing to the right direction"
+                    width="250"
+                    height="50"
+                  />
+                </div>
+              </div>
+              <div className="navRight">
+                <div css={registerStyle}>
+                  <Link href="/register">Get started</Link>
+                </div>
               </div>
             </div>
-            <div css={usernameStyle}>{props.user && props.user.username}</div>
-          </div>
-        </div>
-      </nav>
+          </nav>
+        </header>
+      )}
     </header>
   );
 }
