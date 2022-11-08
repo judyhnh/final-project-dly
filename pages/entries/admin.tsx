@@ -1,5 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from 'react';
 import { Entry } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
@@ -16,19 +18,13 @@ export default function EntriesAdmin(props: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [contentInput, setContentInput] = useState('');
   const [moodInput, setMoodInput] = useState<number>();
-
-  const [contentOnEditInput, setContentOnEditInput] = useState('');
-  const [moodOnEditInput, setMoodOnEditInput] = useState<number>();
-
-  const [onEditId, setOnEditId] = useState<number | undefined>();
+  const router = useRouter();
 
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
     const entriesFromApi = await response.json();
 
     setEntries(entriesFromApi);
-
-    console.log('RESULT', response);
   }
   async function createEntryFromApi() {
     const response = await fetch('/api/entries', {
@@ -37,7 +33,7 @@ export default function EntriesAdmin(props: Props) {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        diary_content: contentInput,
+        diaryContent: contentInput,
         mood: moodInput,
         csrfToken: props.csrfToken,
       }),
@@ -47,45 +43,7 @@ export default function EntriesAdmin(props: Props) {
     const newState = [...entries, entryFromApi];
 
     setEntries(newState);
-  }
-
-  async function deleteEntryFromApiById(id: number) {
-    const response = await fetch(`/api/entries/${id}`, {
-      method: 'DELETE',
-      body: JSON.stringify({ csrfToken: props.csrfToken }),
-    });
-    const deletedEntry = (await response.json()) as Entry;
-
-    const filteredEntries = entries.filter((entry) => {
-      return entry.id !== deletedEntry.id;
-    });
-
-    setEntries(filteredEntries);
-  }
-
-  async function updateEntryFromApiById(id: number) {
-    const response = await fetch(`/api/entries/${id}`, {
-      method: 'PUT',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        diary_content: contentOnEditInput,
-        mood: moodOnEditInput,
-        csrfToken: props.csrfToken,
-      }),
-    });
-    const updatedEntryFromApi = (await response.json()) as Entry;
-
-    const newState = entries.map((entry) => {
-      if (entry.id === updatedEntryFromApi.id) {
-        return updatedEntryFromApi;
-      } else {
-        return entry;
-      }
-    });
-
-    setEntries(newState);
+    await router.push(`/entries`);
   }
 
   useEffect(() => {
@@ -112,6 +70,24 @@ export default function EntriesAdmin(props: Props) {
       </Head>
 
       <h1>Create an Entry</h1>
+      <label>
+        <input type="radio" value="1" name="test" />
+        <Image
+          src="/user.svg"
+          alt="icon of a user in minimalist style"
+          width="20"
+          height="20"
+        />
+      </label>
+      <label>
+        <input type="radio" value="2" name="test" />
+        <Image
+          src="/user.svg"
+          alt="icon of a user in minimalist style"
+          width="20"
+          height="20"
+        />
+      </label>
 
       <label>
         Text:
@@ -128,6 +104,7 @@ export default function EntriesAdmin(props: Props) {
         Mood:
         <br />
         <input
+          type="number"
           value={moodInput}
           onChange={(event) => {
             setMoodInput(parseInt(event.currentTarget.value));
@@ -145,54 +122,6 @@ export default function EntriesAdmin(props: Props) {
       </button>
 
       <hr />
-
-      {entries.map((entry) => {
-        const isEntryOnEdit = onEditId === entry.id;
-        return (
-          <Fragment key={entry.id}>
-            <input
-              value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
-              disabled={!isEntryOnEdit}
-              onChange={(event) => {
-                setContentOnEditInput(event.currentTarget.value);
-              }}
-            />
-            <input
-              type="number"
-              value={isEntryOnEdit ? moodOnEditInput : entry.mood}
-              disabled={!isEntryOnEdit}
-              onChange={(event) => {
-                setMoodOnEditInput(parseInt(event.currentTarget.value));
-              }}
-            />
-
-            <button onClick={() => deleteEntryFromApiById(entry.id)}>
-              DELETE
-            </button>
-            {!isEntryOnEdit ? (
-              <button
-                onClick={() => {
-                  setOnEditId(entry.id);
-                  setContentOnEditInput(entry.diaryContent);
-                  setMoodOnEditInput(entry.mood);
-                }}
-              >
-                EDIT
-              </button>
-            ) : (
-              <button
-                onClick={async () => {
-                  setOnEditId(undefined);
-                  await updateEntryFromApiById(entry.id);
-                }}
-              >
-                SAVE
-              </button>
-            )}
-            <br />
-          </Fragment>
-        );
-      })}
     </>
   );
 }
