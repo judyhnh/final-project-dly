@@ -2,8 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@upleveled/eslint-config-upleveled/tsconfig.base.json",
   "compilerOptions": {
-    "jsxImportSource": "@emotion/react",
     "jsx": "preserve",
-    "types": ["node", "react-emotion"]
+    "jsxImportSource": "@emotion/react"
   }
 }

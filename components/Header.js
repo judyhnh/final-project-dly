@@ -73,7 +73,7 @@ export default function Header(props) {
               </div>
             </div>
             <div className="navRight">
-              <Link href="/">
+              <Link href="/entries/admin">
                 <a>
                   <Image
                     src="/note.svg"
@@ -83,7 +83,7 @@ export default function Header(props) {
                   />
                 </a>
               </Link>
-              <Link href="/">
+              <Link href="/entries">
                 <a>
                   <Image
                     src="/calendar.svg"

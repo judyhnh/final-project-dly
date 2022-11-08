@@ -49,7 +49,7 @@ export async function updateEntryById(
       entries
     SET
       diary_content = ${diaryContent},
-      mood = ${mood},
+      mood = ${mood}
     WHERE
       id = ${id}
     RETURNING *
@@ -64,6 +64,28 @@ export async function deleteEntryById(id: number) {
     WHERE
       id = ${id}
     RETURNING *
+  `;
+  return entry;
+}
+
+export async function getEntryByIdAndValidSessionToken(
+  id: number,
+  token: string | undefined,
+) {
+  if (!token) return undefined;
+
+  const [entry] = await sql<Entry[]>`
+    SELECT
+      entries.*
+    FROM
+      entries,
+      sessions
+    WHERE
+      sessions.token = ${token}
+    AND
+      sessions.expiry_timestamp > now()
+    AND
+      entries.id = ${id}
   `;
   return entry;
 }
