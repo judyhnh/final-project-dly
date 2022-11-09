@@ -4,7 +4,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
-import { Entry, getEntries } from '../../database/entries';
+import { Entry } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
 import { createTokenFromSecret } from '../../utils/csrf';
 
@@ -18,7 +18,8 @@ type Props =
 export default function Entries(props: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [contentOnEditInput, setContentOnEditInput] = useState('');
-  const [moodOnEditInput, setMoodOnEditInput] = useState<number>();
+  const [moodOnEditInput, setMoodOnEditInput] = useState('');
+  const [dateOnEditInput, setDateOnEditInput] = useState('');
 
   const [onEditId, setOnEditId] = useState<number | undefined>();
 
@@ -99,6 +100,16 @@ export default function Entries(props: Props) {
         return (
           <Fragment key={entry.id}>
             <div>Entry Nr.{entry.id}</div>
+
+            <input
+              type="date"
+              value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
+              disabled={!isEntryOnEdit}
+              onChange={(event) => {
+                setDateOnEditInput(event.currentTarget.value);
+              }}
+            />
+
             <input
               value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
               disabled={!isEntryOnEdit}
@@ -106,14 +117,19 @@ export default function Entries(props: Props) {
                 setContentOnEditInput(event.currentTarget.value);
               }}
             />
-            <input
-              type="number"
+            <select
               value={isEntryOnEdit ? moodOnEditInput : entry.mood}
               disabled={!isEntryOnEdit}
               onChange={(event) => {
-                setMoodOnEditInput(parseInt(event.currentTarget.value));
+                setMoodOnEditInput(event.currentTarget.value);
               }}
-            />
+            >
+              <option value="😊">😊</option>
+              <option value="🥲">🥲</option>
+              <option value="🥰">🥰</option>
+              <option value="😫">😫</option>
+              <option value="😒">😒</option>
+            </select>
 
             <button onClick={() => deleteEntryFromApiById(entry.id)}>
               DELETE

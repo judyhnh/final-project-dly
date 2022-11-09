@@ -17,7 +17,9 @@ type Props =
 export default function EntriesAdmin(props: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [contentInput, setContentInput] = useState('');
-  const [moodInput, setMoodInput] = useState<number>();
+  const [moodInput, setMoodInput] = useState('');
+  const [dateInput, setDateInput] = useState('');
+
   const router = useRouter();
 
   async function getEntriesFromApi() {
@@ -35,6 +37,7 @@ export default function EntriesAdmin(props: Props) {
       body: JSON.stringify({
         diaryContent: contentInput,
         mood: moodInput,
+        dateEntry: dateInput,
         csrfToken: props.csrfToken,
       }),
     });
@@ -68,28 +71,20 @@ export default function EntriesAdmin(props: Props) {
         <title>Write an Entry</title>
         <meta name="description" content="Create entries for your diary" />
       </Head>
-
       <h1>Create an Entry</h1>
       <label>
-        <input type="radio" value="1" name="test" />
-        <Image
-          src="/user.svg"
-          alt="icon of a user in minimalist style"
-          width="20"
-          height="20"
+        Date:
+        <br />
+        <input
+          type="date"
+          value={dateInput}
+          onChange={(event) => {
+            setDateInput(event.currentTarget.value);
+          }}
         />
       </label>
       <label>
-        <input type="radio" value="2" name="test" />
-        <Image
-          src="/user.svg"
-          alt="icon of a user in minimalist style"
-          width="20"
-          height="20"
-        />
-      </label>
-
-      <label>
+        <br />
         Text:
         <br />
         <input
@@ -100,19 +95,23 @@ export default function EntriesAdmin(props: Props) {
         />
       </label>
       <br />
+      Mood:
+      <br />
       <label>
-        Mood:
-        <br />
-        <input
-          type="number"
+        <select
           value={moodInput}
           onChange={(event) => {
-            setMoodInput(parseInt(event.currentTarget.value));
+            setMoodInput(event.currentTarget.value);
           }}
-        />
+        >
+          <option value="😊">😊 happy</option>
+          <option value="🥲">🥲 sad but happy</option>
+          <option value="🥰">🥰 happy and loved</option>
+          <option value="😫">😫 stressed out</option>
+          <option value="😒">😒 annoyed</option>
+        </select>
       </label>
       <br />
-
       <button
         onClick={async () => {
           await createEntryFromApi();
@@ -120,7 +119,6 @@ export default function EntriesAdmin(props: Props) {
       >
         Submit
       </button>
-
       <hr />
     </>
   );

@@ -3,7 +3,8 @@ export async function up(sql) {
     CREATE TABLE entries (
       id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
       diary_content varchar(500) NOT NULL,
-      mood integer NOT NULL
+      mood varchar(200) NOT NULL,
+      date_entry varchar(50) NOT NULL
 
     )
   `;

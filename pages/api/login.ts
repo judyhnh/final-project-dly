@@ -24,7 +24,7 @@ export default async function handler(
     ) {
       return response
         .status(400)
-        .json({ errors: [{ message: 'Username or password invalid ☹︎' }] });
+        .json({ errors: [{ message: 'Username and/or password not valid.' }] });
     }
 
     // get user by username
@@ -44,7 +44,7 @@ export default async function handler(
     if (!isPasswordValid) {
       return response
         .status(401)
-        .json({ errors: [{ message: 'Password is not valid ☹︎' }] });
+        .json({ errors: [{ message: 'Username and/or Password not valid.' }] });
     }
     const secret = await createCsrfSecret();
     const session = await createSession(

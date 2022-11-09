@@ -53,8 +53,9 @@ export default async function handler(
     // NOT getting the id from the body since is already on the query
     const diaryContent = request.body?.diaryContent;
     const mood = request.body?.mood;
+    const dateEntry = request.body?.dateEntry;
 
-    if (!(diaryContent && mood)) {
+    if (!(diaryContent && mood && dateEntry)) {
       return response
         .status(400)
         .json({ message: 'No Entry or mood was found.' });
@@ -63,7 +64,12 @@ export default async function handler(
     // TODO: add type checking to the api
 
     // Create the animal using the database util function
-    const newEntry = await updateEntryById(entryId, diaryContent, mood);
+    const newEntry = await updateEntryById(
+      entryId,
+      diaryContent,
+      mood,
+      dateEntry,
+    );
 
     if (!newEntry) {
       return response.status(404).json({ message: 'Not a valid Id' });

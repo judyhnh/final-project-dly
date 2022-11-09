@@ -3,7 +3,8 @@ import { sql } from './connect';
 export type Entry = {
   id: number;
   diaryContent: string;
-  mood: number;
+  mood: string;
+  dateEntry: string;
 };
 
 export async function getEntries() {
@@ -28,12 +29,16 @@ export async function getEntryById(id: number) {
   return entry;
 }
 
-export async function createEntry(diaryContent: string, mood: number) {
+export async function createEntry(
+  diaryContent: string,
+  mood: number,
+  dateEntry: string,
+) {
   const [entry] = await sql<Entry[]>`
     INSERT INTO entries
-      (diary_content, mood)
+      (diary_content, mood, date_entry)
     VALUES
-      (${diaryContent}, ${mood})
+      (${diaryContent}, ${mood}, ${dateEntry})
     RETURNING *
   `;
   return entry;
@@ -42,7 +47,8 @@ export async function createEntry(diaryContent: string, mood: number) {
 export async function updateEntryById(
   id: number,
   diaryContent: string,
-  mood: number,
+  mood: string,
+  dateEntry: string,
 ) {
   const [entry] = await sql<Entry[]>`
     UPDATE
@@ -50,6 +56,7 @@ export async function updateEntryById(
     SET
       diary_content = ${diaryContent},
       mood = ${mood}
+      date_entry = ${dateEntry}
     WHERE
       id = ${id}
     RETURNING *
