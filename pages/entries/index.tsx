@@ -8,6 +8,78 @@ import { Entry } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
 import { createTokenFromSecret } from '../../utils/csrf';
 
+const entryStyle = css`
+  display: flex;
+  flex-direction: column;
+  margin: 60px auto;
+  width: 70vw;
+
+  h1 {
+    letter-spacing: 5px;
+    text-align: center;
+    margin-bottom: 100px;
+  }
+  textarea {
+    text-align: center;
+    height: 300px;
+    background-color: #fff;
+    background-image: linear-gradient(
+        90deg,
+        transparent 79px,
+        #abced4 79px,
+        #abced4 81px,
+        transparent 81px
+      ),
+      linear-gradient(#eee 0.1em, transparent 0.1em);
+    background-size: 100% 1.2em;
+    font-size: 20px;
+    border-left: 3px solid black;
+    border-right: 3px solid black;
+  }
+  .entryNr {
+    margin: 25px 0 5px 0;
+    font-size: 20px;
+    letter-spacing: 5px;
+  }
+
+  select {
+    font-size: 30px;
+    background-color: rgba(255, 215, 0, 0.5);
+    border-left: 3px solid black;
+    border-right: 3px solid black;
+  }
+
+  input {
+    font-size: 18px;
+    border-left: 3px solid black;
+    border-right: 3px solid black;
+    border-top: 3px solid black;
+  }
+`;
+
+const buttonContainer = css`
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgba(255, 215, 0, 0.5);
+  gap: 2px;
+  margin-bottom: 30px;
+  border-left: 2px solid black;
+  border-bottom: 3px solid black;
+  border-right: 2px solid black;
+
+  button {
+    width: 110px;
+    padding: 5px;
+    cursor: pointer;
+  }
+  button:first-child {
+    background-color: rgba(255, 215, 0, 0.5);
+  }
+  button:first-child :hover {
+    background-color: rgba(255, 215, 0, 0.9);
+  }
+`;
+
 type Props =
   | {
       errors: { message: string }[];
@@ -94,84 +166,92 @@ export default function Entries(props: Props) {
         <title>Entries</title>
         <meta name="description" content="Overview of the diary entries." />
       </Head>
-      <h1>Overview of my entries</h1>
+      <div css={entryStyle}>
+        <h1>Overview of my entries</h1>
 
-      {entries.map((entry) => {
-        const isEntryOnEdit = onEditId === entry.id;
-        return (
-          <Fragment key={entry.id}>
-            <div>Entry Nr.{entry.id}</div>
+        {entries.map((entry) => {
+          const isEntryOnEdit = onEditId === entry.id;
+          return (
+            <Fragment key={entry.id}>
+              <div className="entryNr">Entry Nr.{entry.id}</div>
 
-            <input
-              type="date"
-              value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
-              disabled={!isEntryOnEdit}
-              onChange={(event) => {
-                setDateOnEditInput(event.currentTarget.value);
-              }}
-            />
-
-            <textarea
-              value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
-              disabled={!isEntryOnEdit}
-              onChange={(event) => {
-                setContentOnEditInput(event.currentTarget.value);
-              }}
-            />
-            <select
-              value={isEntryOnEdit ? moodOnEditInput : entry.mood}
-              disabled={!isEntryOnEdit}
-              onChange={(event) => {
-                setMoodOnEditInput(event.currentTarget.value);
-              }}
-            >
-              <option value="😊">😊</option>
-              <option value="🥲">🥲</option>
-              <option value="🥰">🥰</option>
-              <option value="😫">😫</option>
-              <option value="😒">😒</option>
-            </select>
-
-            <button onClick={() => deleteEntryFromApiById(entry.id)}>
-              <Image
-                src="/edDelete.svg"
-                alt="trashcan in comic style"
-                width="20"
-                height="20"
+              <input
+                type="date"
+                value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
+                disabled={!isEntryOnEdit}
+                onChange={(event) => {
+                  setDateOnEditInput(event.currentTarget.value);
+                }}
               />
-              DELETE
-            </button>
-            {!isEntryOnEdit ? (
-              <button
-                onClick={() => {
-                  setOnEditId(entry.id);
-                  setContentOnEditInput(entry.diaryContent);
-                  setMoodOnEditInput(entry.mood);
+              <select
+                value={isEntryOnEdit ? moodOnEditInput : entry.mood}
+                disabled={!isEntryOnEdit}
+                onChange={(event) => {
+                  setMoodOnEditInput(event.currentTarget.value);
                 }}
               >
-                <Image
-                  src="/edEdit.svg"
-                  alt="pencil in comic style"
-                  width="20"
-                  height="20"
-                />
-                EDIT
-              </button>
-            ) : (
-              <button
-                onClick={async () => {
-                  setOnEditId(undefined);
-                  await updateEntryFromApiById(entry.id);
+                <option value="😊">😊</option>
+                <option value="🥲">🥲</option>
+                <option value="🥰">🥰</option>
+                <option value="😫">😫</option>
+                <option value="😒">😒</option>
+              </select>
+
+              <textarea
+                value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
+                disabled={!isEntryOnEdit}
+                onChange={(event) => {
+                  setContentOnEditInput(event.currentTarget.value);
                 }}
-              >
-                <Image src="/edConfirm.svg" alt="tick" width="20" height="20" />
-                CONFIRM
-              </button>
-            )}
-            <br />
-          </Fragment>
-        );
-      })}
+              />
+              <div css={buttonContainer}>
+                {!isEntryOnEdit ? (
+                  <button
+                    onClick={() => {
+                      setOnEditId(entry.id);
+                      setContentOnEditInput(entry.diaryContent);
+                      setMoodOnEditInput(entry.mood);
+                    }}
+                  >
+                    <Image
+                      src="/edEdit.svg"
+                      alt="pencil in comic style"
+                      width="20"
+                      height="20"
+                    />
+                    EDIT
+                  </button>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      setOnEditId(undefined);
+                      await updateEntryFromApiById(entry.id);
+                    }}
+                  >
+                    <Image
+                      src="/edConfirm.svg"
+                      alt="tick"
+                      width="20"
+                      height="20"
+                    />
+                    CONFIRM
+                  </button>
+                )}
+
+                <button onClick={() => deleteEntryFromApiById(entry.id)}>
+                  <Image
+                    src="/edDelete.svg"
+                    alt="trashcan in comic style"
+                    width="20"
+                    height="20"
+                  />
+                  DELETE
+                </button>
+              </div>
+            </Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 }

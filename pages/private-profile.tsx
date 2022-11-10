@@ -1,7 +1,20 @@
+import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { getUserBySessionToken, User } from '../database/users';
+
+const profileWrapper = css`
+  display: flex;
+  flex-direction: column;
+  margin: 100px auto;
+  width: 70vw;
+  align-items: center;
+
+  h1 {
+    letter-spacing: 6px;
+  }
+`;
 
 type Props = {
   user?: User;
@@ -30,9 +43,11 @@ export default function UserProfile(props: Props) {
         <title>Profile</title>
         <meta name="description" content="Biography of the person" />
       </Head>
-      <h1>Personal Information</h1>
-      id: {props.user.id} username: {props.user.username}
-      <Anchor href="/logout">Logout</Anchor>
+      <div css={profileWrapper}>
+        <h1>Welcome back, {props.user.username}!</h1>
+
+        <Anchor href="/logout">Logout</Anchor>
+      </div>
     </>
   );
 }
