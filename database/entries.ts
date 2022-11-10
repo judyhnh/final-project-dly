@@ -55,7 +55,7 @@ export async function updateEntryById(
       entries
     SET
       diary_content = ${diaryContent},
-      mood = ${mood}
+      mood = ${mood},
       date_entry = ${dateEntry}
     WHERE
       id = ${id}

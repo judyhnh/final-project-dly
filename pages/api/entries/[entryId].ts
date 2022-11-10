@@ -50,7 +50,6 @@ export default async function handler(
   }
 
   if (request.method === 'PUT') {
-    // NOT getting the id from the body since is already on the query
     const diaryContent = request.body?.diaryContent;
     const mood = request.body?.mood;
     const dateEntry = request.body?.dateEntry;
@@ -61,9 +60,6 @@ export default async function handler(
         .json({ message: 'No Entry or mood was found.' });
     }
 
-    // TODO: add type checking to the api
-
-    // Create the animal using the database util function
     const newEntry = await updateEntryById(
       entryId,
       diaryContent,

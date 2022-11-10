@@ -71,6 +71,7 @@ export default function Entries(props: Props) {
 
     setEntries(newState);
   }
+
   useEffect(() => {
     getEntriesFromApi().catch((err) => {
       console.log(err);
@@ -110,7 +111,7 @@ export default function Entries(props: Props) {
               }}
             />
 
-            <input
+            <textarea
               value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
               disabled={!isEntryOnEdit}
               onChange={(event) => {
@@ -132,6 +133,12 @@ export default function Entries(props: Props) {
             </select>
 
             <button onClick={() => deleteEntryFromApiById(entry.id)}>
+              <Image
+                src="/edDelete.svg"
+                alt="trashcan in comic style"
+                width="20"
+                height="20"
+              />
               DELETE
             </button>
             {!isEntryOnEdit ? (
@@ -142,6 +149,12 @@ export default function Entries(props: Props) {
                   setMoodOnEditInput(entry.mood);
                 }}
               >
+                <Image
+                  src="/edEdit.svg"
+                  alt="pencil in comic style"
+                  width="20"
+                  height="20"
+                />
                 EDIT
               </button>
             ) : (
@@ -151,7 +164,8 @@ export default function Entries(props: Props) {
                   await updateEntryFromApiById(entry.id);
                 }}
               >
-                SAVE
+                <Image src="/edConfirm.svg" alt="tick" width="20" height="20" />
+                CONFIRM
               </button>
             )}
             <br />
