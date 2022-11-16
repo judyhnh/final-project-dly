@@ -30,12 +30,18 @@ const entryWrapper = css`
   }
 
   .dateStyle {
-    margin-left: 10px;
+    margin-left: 30px;
     border: 5px solid white;
     box-shadow: 5px 5px gray;
   }
   .dateStyle:focus {
     outline: 2px solid black;
+  }
+  .uploadStyle {
+    margin-left: 10px;
+    border: 5px solid white;
+    box-shadow: 5px 5px gray;
+    font-family: monospace;
   }
 
   button {
@@ -219,6 +225,7 @@ export default function EntriesAdmin(props: Props) {
           <label>
             Image:
             <input
+              className="uploadStyle"
               type="file"
               onChange={async (event) => {
                 await uploadImage(event);
