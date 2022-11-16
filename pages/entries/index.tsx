@@ -31,6 +31,9 @@ const entryStyle = css`
     margin-bottom: 100px;
   }
   textarea {
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
     border-right: 5px solid black;
     height: 300px;
     width: 50vw;
@@ -47,10 +50,12 @@ const entryStyle = css`
   }
 
   select {
-    font-size: 30px;
+    font-size: 40px;
     background-color: rgba(255, 215, 0, 0.5);
     border-left: 5px solid black;
     border-right: 5px solid black;
+    border-bottom: none;
+    border-top: none;
     text-align: right;
   }
 
@@ -64,7 +69,11 @@ const entryStyle = css`
     border-left: 5px solid black;
     border-right: 5px solid black;
     border-top: 5px solid black;
+    border-bottom: none;
     text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+    color: black;
   }
   input:focus {
     background-color: blue;
@@ -76,7 +85,7 @@ const buttonContainer = css`
   display: flex;
   justify-content: flex-end;
   background-color: rgba(255, 215, 0, 0.5);
-  gap: 2px;
+  gap: 3px;
   margin-bottom: 40px;
   border-left: 5px solid black;
   border-right: 5px solid black;
@@ -85,6 +94,7 @@ const buttonContainer = css`
   button {
     width: 110px;
     padding: 5px;
+    border: 4px solid black;
     cursor: pointer;
   }
   button:first-of-type {
@@ -308,6 +318,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const csrfToken = await createTokenFromSecret(session.csrfSecret);
 
   return {
-    props: { csrfToken, entries: entries },
+    props: { csrfToken, entries },
   };
 }
