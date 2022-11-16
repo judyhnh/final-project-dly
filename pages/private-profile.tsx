@@ -2,6 +2,8 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useState } from 'react';
+import { Entry, getEntries } from '../database/entries';
 import { getUserBySessionToken, User } from '../database/users';
 
 const profileWrapper = css`
@@ -18,6 +20,7 @@ const profileWrapper = css`
 
 type Props = {
   user?: User;
+  entry: Entry;
 };
 function Anchor({ children, ...restProps }) {
   // using a instead of Link since we want to force a full refresh
@@ -48,14 +51,16 @@ export default function UserProfile(props: Props) {
 
         <Anchor href="/logout">Logout</Anchor>
       </div>
+
+      {props.entry.id}
     </>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
-
   const user = token && (await getUserBySessionToken(token));
+  const entry = await getEntries();
 
   if (!user) {
     return {
@@ -67,6 +72,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   return {
-    props: { user },
+    props: { user, entry },
   };
 }

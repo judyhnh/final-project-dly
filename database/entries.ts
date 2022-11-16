@@ -5,6 +5,7 @@ export type Entry = {
   diaryContent: string;
   mood: string;
   dateEntry: string;
+  imageFile: string;
 };
 
 export async function getEntries() {
@@ -33,12 +34,13 @@ export async function createEntry(
   diaryContent: string,
   mood: number,
   dateEntry: string,
+  imageFile: string,
 ) {
   const [entry] = await sql<Entry[]>`
     INSERT INTO entries
-      (diary_content, mood, date_entry)
+      (diary_content, mood, date_entry, image_file)
     VALUES
-      (${diaryContent}, ${mood}, ${dateEntry})
+      (${diaryContent}, ${mood}, ${dateEntry}, ${imageFile})
     RETURNING *
   `;
   return entry;
@@ -49,6 +51,7 @@ export async function updateEntryById(
   diaryContent: string,
   mood: string,
   dateEntry: string,
+  imageFile: string,
 ) {
   const [entry] = await sql<Entry[]>`
     UPDATE
@@ -56,7 +59,8 @@ export async function updateEntryById(
     SET
       diary_content = ${diaryContent},
       mood = ${mood},
-      date_entry = ${dateEntry}
+      date_entry = ${dateEntry},
+      image_file = ${imageFile}
     WHERE
       id = ${id}
     RETURNING *

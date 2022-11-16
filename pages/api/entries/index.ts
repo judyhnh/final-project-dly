@@ -35,19 +35,25 @@ export default async function handler(
     const diaryContent = request.body?.diaryContent;
     const mood = request.body?.mood;
     const dateEntry = request.body?.dateEntry;
+    const imageFile = request.body?.imageFile;
     const csrfToken = request.body?.csrfToken;
 
     if (!(await validateTokenWithSecret(session.csrfSecret, csrfToken))) {
       return response.status(401).json({ message: 'csrf_token is not valid' });
     }
 
-    if (!(diaryContent && mood && dateEntry)) {
+    if (!(diaryContent && mood && dateEntry && imageFile)) {
       return response
         .status(400)
         .json({ message: 'Diary Content or Mood entry is missing.' });
     }
 
-    const newEntry = await createEntry(diaryContent, mood, dateEntry);
+    const newEntry = await createEntry(
+      diaryContent,
+      mood,
+      dateEntry,
+      imageFile,
+    );
 
     return response.status(200).json(newEntry);
   }

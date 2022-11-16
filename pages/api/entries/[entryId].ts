@@ -53,8 +53,9 @@ export default async function handler(
     const diaryContent = request.body?.diaryContent;
     const mood = request.body?.mood;
     const dateEntry = request.body?.dateEntry;
+    const imageFile = request.body?.imageFile;
 
-    if (!(diaryContent && mood && dateEntry)) {
+    if (!(diaryContent && mood && dateEntry && imageFile)) {
       return response
         .status(400)
         .json({ message: 'No Entry or mood was found.' });
@@ -65,6 +66,7 @@ export default async function handler(
       diaryContent,
       mood,
       dateEntry,
+      imageFile,
     );
 
     if (!newEntry) {

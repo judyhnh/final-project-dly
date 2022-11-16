@@ -2,25 +2,29 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { Fragment, useEffect, useState } from 'react';
-import { Entry } from '../../database/entries';
+import { Entry, getEntries } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
 import { createTokenFromSecret } from '../../utils/csrf';
 
-const entryStyle = css`
+const wholeEntryContainer = css`
+  display: flex;
+`;
+
+const entryAndImageContainer = css`
   display: flex;
   flex-direction: column;
+`;
+
+const entryStyle = css`
   margin: 60px auto;
   width: 70vw;
-
   h1 {
     letter-spacing: 5px;
     text-align: center;
     margin-bottom: 100px;
   }
   textarea {
-    text-align: center;
     height: 300px;
     background-color: #fff;
     background-image: linear-gradient(
@@ -36,6 +40,9 @@ const entryStyle = css`
     border-left: 3px solid black;
     border-right: 3px solid black;
   }
+  textarea:focus {
+    outline: 5px solid blue;
+  }
   .entryNr {
     margin: 25px 0 5px 0;
     font-size: 20px;
@@ -49,11 +56,20 @@ const entryStyle = css`
     border-right: 3px solid black;
   }
 
+  select:focus {
+    background-color: rgba(243, 45, 234, 0.4);
+    outline: 2px solid white;
+  }
+
   input {
     font-size: 18px;
     border-left: 3px solid black;
     border-right: 3px solid black;
     border-top: 3px solid black;
+  }
+  input:focus {
+    background-color: blue;
+    color: white;
   }
 `;
 
@@ -62,7 +78,7 @@ const buttonContainer = css`
   justify-content: flex-end;
   background-color: rgba(255, 215, 0, 0.5);
   gap: 2px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   border-left: 2px solid black;
   border-bottom: 3px solid black;
   border-right: 2px solid black;
@@ -72,10 +88,10 @@ const buttonContainer = css`
     padding: 5px;
     cursor: pointer;
   }
-  button:first-child {
+  button:first-of-type {
     background-color: rgba(255, 215, 0, 0.5);
   }
-  button:first-child :hover {
+  button:first-of-type :hover {
     background-color: rgba(255, 215, 0, 0.9);
   }
 `;
@@ -92,7 +108,7 @@ export default function Entries(props: Props) {
   const [contentOnEditInput, setContentOnEditInput] = useState('');
   const [moodOnEditInput, setMoodOnEditInput] = useState('');
   const [dateOnEditInput, setDateOnEditInput] = useState('');
-
+  const [imageOnEditInput, setImageOnEditInput] = useState('');
   const [onEditId, setOnEditId] = useState<number | undefined>();
 
   async function getEntriesFromApi() {
@@ -128,6 +144,7 @@ export default function Entries(props: Props) {
       body: JSON.stringify({
         diaryContent: contentOnEditInput,
         mood: moodOnEditInput,
+        imageFile: imageOnEditInput,
         csrfToken: props.csrfToken,
       }),
     });
@@ -173,80 +190,103 @@ export default function Entries(props: Props) {
           const isEntryOnEdit = onEditId === entry.id;
           return (
             <Fragment key={entry.id}>
-              <div className="entryNr">Entry Nr.{entry.id}</div>
+              <div css={wholeEntryContainer}>
+                <div css={entryAndImageContainer}>
+                  <div className="entryNr">Entry Nr.{entry.id}</div>
+                  <img
+                    src={entry.imageFile}
+                    width="100"
+                    height="100"
+                    alt="daily entry"
+                  />
+                </div>
+                <input
+                  type="date"
+                  value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
+                  disabled={!isEntryOnEdit}
+                  onChange={(event) => {
+                    setDateOnEditInput(event.currentTarget.value);
+                  }}
+                />
+                <select
+                  value={isEntryOnEdit ? moodOnEditInput : entry.mood}
+                  disabled={!isEntryOnEdit}
+                  onChange={(event) => {
+                    setMoodOnEditInput(event.currentTarget.value);
+                  }}
+                >
+                  <option value="😊">😊</option>
+                  <option value="🥲">🥲</option>
+                  <option value="🥰">🥰</option>
+                  <option value="😫">😫</option>
+                  <option value="😒">😒</option>
+                </select>
 
-              <input
-                type="date"
-                value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
-                disabled={!isEntryOnEdit}
-                onChange={(event) => {
-                  setDateOnEditInput(event.currentTarget.value);
-                }}
-              />
-              <select
-                value={isEntryOnEdit ? moodOnEditInput : entry.mood}
-                disabled={!isEntryOnEdit}
-                onChange={(event) => {
-                  setMoodOnEditInput(event.currentTarget.value);
-                }}
-              >
-                <option value="😊">😊</option>
-                <option value="🥲">🥲</option>
-                <option value="🥰">🥰</option>
-                <option value="😫">😫</option>
-                <option value="😒">😒</option>
-              </select>
+                <textarea
+                  value={
+                    isEntryOnEdit ? contentOnEditInput : entry.diaryContent
+                  }
+                  disabled={!isEntryOnEdit}
+                  onChange={(event) => {
+                    setContentOnEditInput(event.currentTarget.value);
+                  }}
+                />
 
-              <textarea
-                value={isEntryOnEdit ? contentOnEditInput : entry.diaryContent}
-                disabled={!isEntryOnEdit}
-                onChange={(event) => {
-                  setContentOnEditInput(event.currentTarget.value);
-                }}
-              />
-              <div css={buttonContainer}>
-                {!isEntryOnEdit ? (
+                <div css={buttonContainer}>
+                  {!isEntryOnEdit ? (
+                    <button
+                      onClick={() => {
+                        setOnEditId(entry.id);
+                        setContentOnEditInput(entry.diaryContent);
+                        setMoodOnEditInput(entry.mood);
+                        setImageOnEditInput(entry.imageFile);
+                      }}
+                    >
+                      <Image
+                        src="/edEdit.svg"
+                        alt="pencil in comic style"
+                        width="20"
+                        height="20"
+                      />
+                      EDIT
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        setOnEditId(undefined);
+                        await updateEntryFromApiById(entry.id);
+                      }}
+                    >
+                      <Image
+                        src="/edConfirm.svg"
+                        alt="tick"
+                        width="20"
+                        height="20"
+                      />
+                      CONFIRM
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
-                      setOnEditId(entry.id);
-                      setContentOnEditInput(entry.diaryContent);
-                      setMoodOnEditInput(entry.mood);
+                      if (
+                        window.confirm(
+                          'Do you really want to delete this entry? ☹️',
+                        )
+                      ) {
+                        deleteEntryFromApiById(entry.id).catch(() => {});
+                      }
                     }}
                   >
                     <Image
-                      src="/edEdit.svg"
-                      alt="pencil in comic style"
+                      src="/edDelete.svg"
+                      alt="trashcan in comic style"
                       width="20"
                       height="20"
                     />
-                    EDIT
+                    DELETE
                   </button>
-                ) : (
-                  <button
-                    onClick={async () => {
-                      setOnEditId(undefined);
-                      await updateEntryFromApiById(entry.id);
-                    }}
-                  >
-                    <Image
-                      src="/edConfirm.svg"
-                      alt="tick"
-                      width="20"
-                      height="20"
-                    />
-                    CONFIRM
-                  </button>
-                )}
-
-                <button onClick={() => deleteEntryFromApiById(entry.id)}>
-                  <Image
-                    src="/edDelete.svg"
-                    alt="trashcan in comic style"
-                    width="20"
-                    height="20"
-                  />
-                  DELETE
-                </button>
+                </div>
               </div>
             </Fragment>
           );
@@ -260,6 +300,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
 
   const session = token && (await getValidSessionByToken(token));
+  const entries = await getEntries();
 
   if (!session) {
     context.res.statusCode = 401;
@@ -269,6 +310,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const csrfToken = await createTokenFromSecret(session.csrfSecret);
 
   return {
-    props: { csrfToken },
+    props: { csrfToken, entries: entries },
   };
 }

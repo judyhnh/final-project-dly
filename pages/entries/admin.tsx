@@ -104,6 +104,7 @@ type Props =
   | {
       errors: { message: string }[];
       csrfToken: undefined;
+      cloudinaryAPI: string | undefined;
     }
   | { csrfToken: string };
 
@@ -112,8 +113,27 @@ export default function EntriesAdmin(props: Props) {
   const [contentInput, setContentInput] = useState('');
   const [moodInput, setMoodInput] = useState('');
   const [dateInput, setDateInput] = useState('');
+  const [imageFile, setImageFile] = useState('');
 
   const router = useRouter();
+
+  const uploadImage = async (event: any) => {
+    const files = event.currentTarget.files;
+    const formData = new FormData();
+    formData.append('file', files[0]);
+    formData.append('upload_preset', 'daily_images');
+
+    const response = await fetch(
+      `	https://api.cloudinary.com/v1_1/doaftjyzk/upload`,
+      {
+        method: 'POST',
+        body: formData,
+      },
+    );
+    const file = await response.json();
+
+    setImageFile(file.secure_url);
+  };
 
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
@@ -131,6 +151,7 @@ export default function EntriesAdmin(props: Props) {
         diaryContent: contentInput,
         mood: moodInput,
         dateEntry: dateInput,
+        imageFile: imageFile,
         csrfToken: props.csrfToken,
       }),
     });
@@ -196,6 +217,15 @@ export default function EntriesAdmin(props: Props) {
             />
           </label>
           <label>
+            Image:
+            <input
+              type="file"
+              onChange={async (event) => {
+                await uploadImage(event);
+              }}
+            />
+          </label>
+          <label>
             Text:
             <textarea
               value={contentInput}
@@ -221,6 +251,7 @@ export default function EntriesAdmin(props: Props) {
             </select>
           </label>
         </div>
+
         <button
           onClick={async () => {
             await createEntryFromApi();
@@ -246,7 +277,10 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const csrfToken = await createTokenFromSecret(session.csrfSecret);
 
+  const cloudinaryAPI = process.env.CLOUDINARY_NAME;
+  console.log(cloudinaryAPI);
+
   return {
-    props: { csrfToken },
+    props: { csrfToken, cloudinaryAPI },
   };
 }
