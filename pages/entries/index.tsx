@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { Entry, getEntries } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
+import { getUserByUsername } from '../../database/users';
 import { createTokenFromSecret } from '../../utils/csrf';
 
 const imageAndText = css`
@@ -119,6 +120,12 @@ export default function Entries(props: Props) {
   const [dateOnEditInput, setDateOnEditInput] = useState('');
   const [imageOnEditInput, setImageOnEditInput] = useState('');
   const [onEditId, setOnEditId] = useState<number | undefined>();
+  const [mood, setMood] = useState();
+  const [moodFilter, setMoodFilter] = useState<string>();
+
+  const handleChangeMood = (event: SelectChangeEvent) => {
+    setMood(event.target.value);
+  };
 
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
@@ -194,6 +201,59 @@ export default function Entries(props: Props) {
       </Head>
       <div css={entryStyle}>
         <h1>Overview of my entries</h1>
+        <div>
+          <select
+            value={mood ? mood : ''}
+            defaultValue={mood}
+            onChange={handleChangeMood}
+          >
+            {entries.map((option) => (
+              <option key={option.id} value={option.mood}>
+                {option.mood}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={() => {
+              setMoodFilter(mood);
+            }}
+          >
+            FILTER
+          </button>
+        </div>
+        {entries
+          .filter((entry) => {
+            let filter = true;
+            if (moodFilter && entry.mood !== moodFilter) {
+              filter = false;
+            }
+            return filter;
+          })
+          .map((filteredEntry) => {
+            return (
+              <div key={filteredEntry.id}>
+                <input type="date" value={filteredEntry.dateEntry} />
+                <select value={filteredEntry.mood}>
+                  <option value="😊">😊</option>
+                  <option value="🥲">🥲</option>
+                  <option value="🥰">🥰</option>
+                  <option value="😫">😫</option>
+                  <option value="😒">😒</option>
+                </select>
+                <div css={imageAndText}>
+                  <img
+                    src={filteredEntry.imageFile}
+                    width="200"
+                    height="300"
+                    alt="daily entry"
+                  />
+
+                  <textarea value={filteredEntry.diaryContent} />
+                </div>
+              </div>
+            );
+          })}
 
         {entries.map((entry) => {
           const isEntryOnEdit = onEditId === entry.id;
