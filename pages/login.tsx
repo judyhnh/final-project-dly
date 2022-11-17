@@ -120,7 +120,7 @@ export default function Login(props: Props) {
 
   const router = useRouter();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
   };
 

@@ -54,6 +54,9 @@ function MyApp({ Component, pageProps }) {
           *::after {
             box-sizing: border-box;
           }
+          ::selection {
+            background: gold;
+          }
         `}
       />
       <Head>

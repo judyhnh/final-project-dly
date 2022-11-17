@@ -2,6 +2,22 @@ import { css } from '@emotion/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+const headerStyle = css`
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  color: #333;
+  background-color: #fff;
+  background-image: linear-gradient(
+      90deg,
+      transparent 79px,
+      #abced4 79px,
+      #abced4 81px,
+      transparent 81px
+    ),
+    linear-gradient(#eee 0.1em, transparent 0.1em);
+  background-size: 100% 1.2em;
+`;
 const headerWrapper = css`
   display: flex;
   flex-direction: row;
@@ -25,7 +41,7 @@ const headerWrapper = css`
   }
 
   .navLeft {
-    margin-left: 60px;
+    margin-left: 80px;
     font-size: 50px;
     letter-spacing: 15px;
     display: flex;
@@ -57,7 +73,7 @@ const registerStyle = css`
 
 export default function Header(props) {
   return (
-    <header>
+    <header css={headerStyle}>
       {props.user ? (
         <nav>
           <div css={headerWrapper}>

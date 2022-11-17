@@ -147,7 +147,7 @@ export default function Register(props: Props) {
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: any) => {
     event.preventDefault();
   };
 

@@ -235,6 +235,7 @@ export default function EntriesAdmin(props: Props) {
           <label>
             Text:
             <textarea
+              spellCheck="false"
               value={contentInput}
               onChange={(event) => {
                 setContentInput(event.currentTarget.value);
@@ -285,7 +286,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const csrfToken = await createTokenFromSecret(session.csrfSecret);
 
   const cloudinaryAPI = process.env.CLOUDINARY_NAME;
-  console.log(cloudinaryAPI);
 
   return {
     props: { csrfToken, cloudinaryAPI },

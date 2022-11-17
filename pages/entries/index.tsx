@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
 import { Entry, getEntries } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
-import { getUserByUsername } from '../../database/users';
 import { createTokenFromSecret } from '../../utils/csrf';
 
 const imageAndText = css`
@@ -17,6 +16,7 @@ const imageAndText = css`
   img {
     align-self: center;
     margin-left: 30px;
+    opacity: 0.8;
   }
 `;
 
@@ -30,6 +30,7 @@ const entryStyle = css`
     letter-spacing: 5px;
     text-align: center;
     margin-bottom: 100px;
+    word-spacing: 20px;
   }
   textarea {
     border-top: none;
@@ -42,17 +43,12 @@ const entryStyle = css`
     font-size: 20px;
   }
   textarea:focus {
-    outline: 5px solid blue;
-  }
-  .entryNr {
-    margin: 25px 0 5px 0;
-    font-size: 20px;
-    letter-spacing: 5px;
+    outline: 3px solid blue;
   }
 
   select {
     font-size: 40px;
-    background-color: rgba(255, 215, 0, 0.5);
+    background-color: transparent;
     border-left: 5px solid black;
     border-right: 5px solid black;
     border-bottom: none;
@@ -77,7 +73,7 @@ const entryStyle = css`
     color: black;
   }
   input:focus {
-    background-color: blue;
+    background-color: darkblue;
     color: white;
   }
 `;
@@ -85,7 +81,7 @@ const entryStyle = css`
 const buttonContainer = css`
   display: flex;
   justify-content: flex-end;
-  background-color: rgba(255, 215, 0, 0.5);
+  background-color: transparent;
   gap: 3px;
   margin-bottom: 40px;
   border-left: 5px solid black;
@@ -120,18 +116,14 @@ export default function Entries(props: Props) {
   const [dateOnEditInput, setDateOnEditInput] = useState('');
   const [imageOnEditInput, setImageOnEditInput] = useState('');
   const [onEditId, setOnEditId] = useState<number | undefined>();
-  const [mood, setMood] = useState();
-  const [moodFilter, setMoodFilter] = useState<string>();
-
-  const handleChangeMood = (event: SelectChangeEvent) => {
-    setMood(event.target.value);
-  };
 
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
     const entriesFromApi = await response.json();
+    // Display the newest Entry(id=last) first
+    const newSorting = [...entriesFromApi].reverse();
 
-    setEntries(entriesFromApi);
+    setEntries(newSorting);
   }
 
   async function deleteEntryFromApiById(id: number) {
@@ -200,67 +192,13 @@ export default function Entries(props: Props) {
         <meta name="description" content="Overview of the diary entries." />
       </Head>
       <div css={entryStyle}>
-        <h1>Overview of my entries</h1>
-        <div>
-          <select
-            value={mood ? mood : ''}
-            defaultValue={mood}
-            onChange={handleChangeMood}
-          >
-            {entries.map((option) => (
-              <option key={option.id} value={option.mood}>
-                {option.mood}
-              </option>
-            ))}
-          </select>
-
-          <button
-            onClick={() => {
-              setMoodFilter(mood);
-            }}
-          >
-            FILTER
-          </button>
-        </div>
-        {entries
-          .filter((entry) => {
-            let filter = true;
-            if (moodFilter && entry.mood !== moodFilter) {
-              filter = false;
-            }
-            return filter;
-          })
-          .map((filteredEntry) => {
-            return (
-              <div key={filteredEntry.id}>
-                <input type="date" value={filteredEntry.dateEntry} />
-                <select value={filteredEntry.mood}>
-                  <option value="😊">😊</option>
-                  <option value="🥲">🥲</option>
-                  <option value="🥰">🥰</option>
-                  <option value="😫">😫</option>
-                  <option value="😒">😒</option>
-                </select>
-                <div css={imageAndText}>
-                  <img
-                    src={filteredEntry.imageFile}
-                    width="200"
-                    height="300"
-                    alt="daily entry"
-                  />
-
-                  <textarea value={filteredEntry.diaryContent} />
-                </div>
-              </div>
-            );
-          })}
+        <h1>⑉ Overview of my entries ⑇</h1>
 
         {entries.map((entry) => {
           const isEntryOnEdit = onEditId === entry.id;
+
           return (
             <Fragment key={entry.id}>
-              <div className="entryNr">Entry Nr.{entry.id}</div>
-
               <input
                 type="date"
                 value={isEntryOnEdit ? dateOnEditInput : entry.dateEntry}
@@ -291,6 +229,7 @@ export default function Entries(props: Props) {
                 />
 
                 <textarea
+                  spellCheck="false"
                   value={
                     isEntryOnEdit ? contentOnEditInput : entry.diaryContent
                   }
