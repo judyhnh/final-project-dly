@@ -109,17 +109,6 @@ export default function Header(props) {
                   />
                 </a>
               </Link>
-              <Link href="/">
-                <a>
-                  <Image
-                    src="/setting.svg"
-                    alt="icon of a wheel in comic style"
-                    width="35"
-                    height="35"
-                  />
-                </a>
-              </Link>
-
               <Link href="/private-profile">
                 <a>
                   <Image

@@ -29,7 +29,7 @@ const entryStyle = css`
   h1 {
     letter-spacing: 5px;
     text-align: center;
-    margin-bottom: 100px;
+    margin-bottom: 120px;
     word-spacing: 20px;
   }
   textarea {
@@ -83,7 +83,7 @@ const buttonContainer = css`
   justify-content: flex-end;
   background-color: transparent;
   gap: 3px;
-  margin-bottom: 40px;
+  margin-bottom: 60px;
   border-left: 5px solid black;
   border-right: 5px solid black;
   border-bottom: 5px solid black;
