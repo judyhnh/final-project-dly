@@ -79,6 +79,7 @@ const quoteContainer = css`
     flex-direction: column;
     padding: 20px;
     margin: 0 80px 0 10px;
+    border: 3px dashed black;
 
     p {
       letter-spacing: 2px;
@@ -144,8 +145,8 @@ export default function Home() {
         />
         <div className="quoteTextContainer">
           <p>
-            My diary is like my best friend, with the difference that it can
-            keep all my secrets safe. I like my diary.
+            My diary is like my best friend, with the difference it keeps all my
+            secrets safe. I like my diary.
           </p>
           <p>by J. H.</p>
         </div>

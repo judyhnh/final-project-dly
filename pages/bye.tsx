@@ -31,7 +31,7 @@ export default function Home() {
         <link rel="manifest" href="/manifest.json" />
       </Head>
       <div>
-        <p>BYE, SEE YOU SOON!</p>
+        <p>BYE, SEE YOU TOMORROW!</p>
       </div>
       <div css={imageStyle}>
         <Image

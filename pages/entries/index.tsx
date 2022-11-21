@@ -192,7 +192,7 @@ export default function Entries(props: Props) {
         <meta name="description" content="Overview of the diary entries." />
       </Head>
       <div css={entryStyle}>
-        <h1>⑉ Overview of my entries ⑇</h1>
+        <h1>⑉ Overview of my entries ⑉</h1>
 
         {entries.map((entry) => {
           const isEntryOnEdit = onEditId === entry.id;

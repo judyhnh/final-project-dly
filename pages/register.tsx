@@ -202,14 +202,6 @@ export default function Register(props: Props) {
           />
         </div>
 
-        <div css={arrowRight}>
-          <Image
-            src="/arrowRight.svg"
-            alt="arrow with loop"
-            width="300"
-            height="500"
-          />
-        </div>
         <div css={registerStyleRight}>
           <h1>Create an Account</h1>
           <div css={formContainer}>
