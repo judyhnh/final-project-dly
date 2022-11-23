@@ -47,7 +47,7 @@
 ## ▶ API key
 
 - Set up account on <a href="cloudinary.com">cloudinary</a>
-- Save cloudinary name in `.env` file
+- Save your `Cloud Name` as `CLOUDINARY_NAME` in `.env` file
 
 ## ▶ Deploy on Fly.io
 - Sign up on `Fly.io`
