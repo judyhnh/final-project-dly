@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Entry, getEntries } from '../database/entries';
 import { getUserBySessionToken, User } from '../database/users';
 
@@ -151,8 +151,11 @@ const imageStyle = css`
 type Props = {
   user?: User;
   entry: Entry;
+  children?: ReactNode;
+  href: string;
 };
-function Anchor({ children, ...restProps }) {
+
+function Anchor({ children, ...restProps }: Props) {
   // using a instead of Link since we want to force a full refresh
   return <a {...restProps}>{children}</a>;
 }
@@ -206,7 +209,18 @@ export default function UserProfile(props: Props) {
         <meta name="description" content="Biography of the person" />
       </Head>
       <div css={profileWrapper}>
-        <Anchor href="/logout">LOGOUT</Anchor>
+        <Anchor
+          href="/logout"
+          entry={{
+            id: 0,
+            diaryContent: '',
+            mood: '',
+            dateEntry: '',
+            imageFile: '',
+          }}
+        >
+          LOGOUT
+        </Anchor>
         <h1>
           Welcome back, <i>✧ {props.user.username} ✧</i> !
         </h1>

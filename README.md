@@ -1,1 +1,1 @@
-(img/dlyLogo.png)
+![dly Logo](public/dlyLogo.png)
