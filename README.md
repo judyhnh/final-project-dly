@@ -111,11 +111,12 @@ flyctl volumes create postgres --size 1 --region fra
 flyctl deploy
 ```
 
-## Screenshots
+## ▶ Screenshots
 
 ![landing page](public/landingPage.png)
+
 ![add entry](public/addEntry.png)
 
-## Drafts on Figma
+## ▶ Drafts with Figma
 
 ![draft](public/draftFigma.png)
