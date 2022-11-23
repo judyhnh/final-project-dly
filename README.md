@@ -1,7 +1,5 @@
 ![dly Logo](public/dlyLogo.png)
 
-=======
-
 ## ▶ Description
 
 `DaiLy` is your daily diary ✍︎!
@@ -113,4 +111,11 @@ flyctl volumes create postgres --size 1 --region fra
 flyctl deploy
 ```
 
-## 👍
+## Screenshots
+
+![landing page](public/landingPage.png)
+![add entry](public/addEntry.png)
+
+## Drafts on Figma
+
+![draft](public/draftFigma.png)
