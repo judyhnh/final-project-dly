@@ -24,7 +24,9 @@ export default async function handler(
     ) {
       return response
         .status(400)
-        .json({ errors: [{ message: 'Username and/or password not valid.' }] });
+        .json({
+          errors: [{ message: 'Username and/or password not valid. ☹︎' }],
+        });
     }
 
     // get user by username
@@ -32,7 +34,9 @@ export default async function handler(
     if (!user) {
       return response
         .status(401)
-        .json({ errors: [{ message: 'Username not found ☹︎' }] });
+        .json({
+          errors: [{ message: 'Username and/ or password not valid. ☹︎' }],
+        });
     }
 
     // match hash and pw

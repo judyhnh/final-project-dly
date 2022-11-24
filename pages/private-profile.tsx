@@ -2,7 +2,6 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ReactNode, useEffect, useState } from 'react';
 import { Entry, getEntries } from '../database/entries';
 import { getUserBySessionToken, User } from '../database/users';
@@ -168,6 +167,7 @@ export default function UserProfile(props: Props) {
   const handleChangeMood = (event: any) => {
     setMood(event.target.value);
   };
+
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
     const entriesFromApi = await response.json();
@@ -175,6 +175,7 @@ export default function UserProfile(props: Props) {
 
     setEntries(newSorting);
   }
+
   useEffect(() => {
     getEntriesFromApi().catch((err) => {
       console.log(err);

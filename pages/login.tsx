@@ -135,6 +135,7 @@ export default function Login(props: Props) {
         password,
       }),
     });
+
     const loginResponseBody = (await loginResponse.json()) as LoginResponseBody;
 
     if ('errors' in loginResponseBody) {

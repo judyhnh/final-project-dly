@@ -120,7 +120,6 @@ export default function Entries(props: Props) {
   async function getEntriesFromApi() {
     const response = await fetch('/api/entries');
     const entriesFromApi = await response.json();
-    // Display the newest Entry(id=last) first
     const newSorting = [...entriesFromApi].reverse();
 
     setEntries(newSorting);
@@ -152,10 +151,12 @@ export default function Entries(props: Props) {
       body: JSON.stringify({
         diaryContent: contentOnEditInput,
         mood: moodOnEditInput,
+        dateEntry: dateOnEditInput,
         imageFile: imageOnEditInput,
         csrfToken: props.csrfToken,
       }),
     });
+
     const updatedEntryFromApi = (await response.json()) as Entry;
 
     const newState = entries.map((entry) => {
@@ -247,6 +248,7 @@ export default function Entries(props: Props) {
                       setOnEditId(entry.id);
                       setContentOnEditInput(entry.diaryContent);
                       setMoodOnEditInput(entry.mood);
+                      setDateOnEditInput(entry.dateEntry);
                       setImageOnEditInput(entry.imageFile);
                     }}
                   >
