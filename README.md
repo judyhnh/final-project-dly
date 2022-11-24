@@ -23,7 +23,7 @@
 
 - Next.js
 - React.js
-- Postgres.js
+- PostgreSQL
 - Emotion
 - Jest (Unit tests)
 - Playwright (E2E tests)
