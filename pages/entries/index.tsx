@@ -17,6 +17,7 @@ const imageAndText = css`
     align-self: center;
     margin-left: 30px;
     opacity: 0.8;
+    object-fit: scale-down;
   }
 `;
 
