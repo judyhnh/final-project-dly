@@ -3,8 +3,9 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { Fragment, useEffect, useState } from 'react';
-import { Entry, getEntries } from '../../database/entries';
+import { Entry, getEntriesByUserId } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
+import { getUserBySessionToken } from '../../database/users';
 import { createTokenFromSecret } from '../../utils/csrf';
 
 const imageAndText = css`
@@ -107,24 +108,25 @@ type Props =
   | {
       errors: { message: string }[];
       csrfToken: undefined;
+      entries: Entry[];
     }
-  | { csrfToken: string };
+
 
 export default function Entries(props: Props) {
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<Entry[]>(props.entries);
   const [contentOnEditInput, setContentOnEditInput] = useState('');
   const [moodOnEditInput, setMoodOnEditInput] = useState('');
   const [dateOnEditInput, setDateOnEditInput] = useState('');
   const [imageOnEditInput, setImageOnEditInput] = useState('');
   const [onEditId, setOnEditId] = useState<number | undefined>();
 
-  async function getEntriesFromApi() {
-    const response = await fetch('/api/entries');
-    const entriesFromApi = await response.json();
-    const newSorting = [...entriesFromApi].reverse();
+  // async function getEntriesFromApi() {
+  //   const response = await fetch('/api/entries');
+  //   const entriesFromApi = await response.json();
+  //   const newSorting = [...entriesFromApi].reverse();
 
-    setEntries(newSorting);
-  }
+  //   setEntries(newSorting);
+  // }
 
   async function deleteEntryFromApiById(id: number) {
     const response = await fetch(`/api/entries/${id}`, {
@@ -171,11 +173,11 @@ export default function Entries(props: Props) {
     setEntries(newState);
   }
 
-  useEffect(() => {
-    getEntriesFromApi().catch((err) => {
-      console.log(err);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getEntriesFromApi().catch((err) => {
+  //     console.log(err);
+  //   });
+  // }, []);
 
   if ('errors' in props) {
     return (
@@ -310,7 +312,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
 
   const session = token && (await getValidSessionByToken(token));
-  const entries = await getEntries();
+  const user = token && (await getUserBySessionToken(token));
+  const entries = user && (await getEntriesByUserId(user.id));
 
   if (!session) {
     context.res.statusCode = 401;

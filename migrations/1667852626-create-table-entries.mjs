@@ -5,7 +5,8 @@ export async function up(sql) {
       diary_content varchar(1500) NOT NULL,
       mood varchar(200) NOT NULL,
       date_entry varchar(50) NOT NULL,
-      image_file varchar(255) UNIQUE
+      image_file varchar(255) UNIQUE,
+      user_id integer REFERENCES users (id) ON DELETE CASCADE
 
 
     )

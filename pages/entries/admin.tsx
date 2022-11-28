@@ -3,9 +3,11 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
+import { userAgent } from 'next/server';
 import { useEffect, useState } from 'react';
 import { Entry } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
+import { getUserBySessionToken, User } from '../../database/users';
 import { createTokenFromSecret } from '../../utils/csrf';
 
 const entryWrapper = css`
@@ -106,13 +108,12 @@ const contentStyle = css`
   }
 `;
 
-type Props =
-  | {
-      errors: { message: string }[];
-      csrfToken: undefined;
-      cloudinaryAPI: string | undefined;
-    }
-  | { csrfToken: string };
+type Props = {
+  errors: { message: string }[];
+  csrfToken: undefined;
+  cloudinaryAPI: string | undefined;
+  user: User;
+};
 
 export default function EntriesAdmin(props: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -159,6 +160,7 @@ export default function EntriesAdmin(props: Props) {
         dateEntry: dateInput,
         imageFile: imageFile,
         csrfToken: props.csrfToken,
+        userId: props.user.id,
       }),
     });
 
@@ -277,6 +279,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
 
   const session = token && (await getValidSessionByToken(token));
+  const user = token && (await getUserBySessionToken(token));
+
 
   if (!session) {
     context.res.statusCode = 401;
@@ -288,6 +292,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const cloudinaryAPI = process.env.CLOUDINARY_NAME;
 
   return {
-    props: { csrfToken, cloudinaryAPI },
+    props: { csrfToken, cloudinaryAPI, user },
   };
 }

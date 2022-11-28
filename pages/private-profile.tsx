@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { ReactNode, useEffect, useState } from 'react';
-import { Entry, getEntries } from '../database/entries';
+import { Entry, getEntries, getEntriesByUserId } from '../database/entries';
 import { getUserBySessionToken, User } from '../database/users';
 
 const filterResultStyle = css`
@@ -149,7 +149,7 @@ const imageStyle = css`
 
 type Props = {
   user?: User;
-  entry: Entry;
+  entry: Entry[];
   children?: ReactNode;
   href: string;
 };
@@ -160,27 +160,13 @@ function Anchor({ children, ...restProps }: Props) {
 }
 
 export default function UserProfile(props: Props) {
-  const [entries, setEntries] = useState<Entry[]>([]);
+  const [entries, setEntries] = useState<Entry[]>(props.entry);
   const [mood, setMood] = useState();
   const [moodFilter, setMoodFilter] = useState<string>();
 
   const handleChangeMood = (event: any) => {
     setMood(event.target.value);
   };
-
-  async function getEntriesFromApi() {
-    const response = await fetch('/api/entries');
-    const entriesFromApi = await response.json();
-    const newSorting = [...entriesFromApi].reverse();
-
-    setEntries(newSorting);
-  }
-
-  useEffect(() => {
-    getEntriesFromApi().catch((err) => {
-      console.log(err);
-    });
-  }, []);
 
   const moodArray: Entry['mood'][] = [];
   entries.map((entry) => {
@@ -311,7 +297,7 @@ export default function UserProfile(props: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const token = context.req.cookies.sessionToken;
   const user = token && (await getUserBySessionToken(token));
-  const entry = await getEntries();
+  const entry = user && (await getEntriesByUserId(user.id));
 
   if (!user) {
     return {

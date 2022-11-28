@@ -37,6 +37,7 @@ export default async function handler(
     const dateEntry = request.body?.dateEntry;
     const imageFile = request.body?.imageFile;
     const csrfToken = request.body?.csrfToken;
+    const userId = request.body?.userId;
 
     if (!(await validateTokenWithSecret(session.csrfSecret, csrfToken))) {
       return response.status(401).json({ message: 'csrf_token is not valid' });
@@ -53,6 +54,7 @@ export default async function handler(
       mood,
       dateEntry,
       imageFile,
+      userId,
     );
 
     return response.status(200).json(newEntry);

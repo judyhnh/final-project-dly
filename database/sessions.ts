@@ -12,15 +12,21 @@ export async function createSession(
   token: string,
   csrfSecret: string,
 ) {
-  const [session] = await sql<Session[]>`
+  const [session] = await sql<
+    {
+      id: number;
+      token: string;
+      expiryTimestamp: Date;
+      userId: number;
+      csrfSecret: string;
+    }[]
+  >`
   INSERT INTO sessions
     (token, user_id, csrf_secret)
   VALUES
     (${token}, ${userId}, ${csrfSecret})
   RETURNING
-   id,
-   token,
-   csrf_secret
+   *
   `;
 
   await deleteExpiredSessions();
