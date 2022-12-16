@@ -17,7 +17,7 @@ export async function createSession(
       id: number;
       token: string;
       expiryTimestamp: Date;
-      userId: number;
+      userId: number | null;
       csrfSecret: string;
     }[]
   >`

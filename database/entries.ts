@@ -17,8 +17,8 @@ export async function getEntries() {
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     SELECT
@@ -36,8 +36,8 @@ export async function getEntriesByUserId(userId: number) {
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     SELECT
@@ -64,8 +64,8 @@ export async function createEntry(
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     INSERT INTO entries
@@ -91,8 +91,8 @@ export async function updateEntryById(
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     UPDATE
@@ -116,8 +116,8 @@ export async function deleteEntryById(id: number) {
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     DELETE FROM
@@ -141,8 +141,8 @@ export async function getEntryByIdAndValidSessionToken(
       diaryContent: string;
       mood: string;
       dateEntry: string;
-      imageFile: string;
-      userId: number;
+      imageFile: string | null;
+      userId: number | null;
     }[]
   >`
     SELECT
