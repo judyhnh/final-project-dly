@@ -2,113 +2,10 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { ReactNode, useEffect, useState } from 'react';
-import { Entry, getEntries, getEntriesByUserId } from '../database/entries';
+import { ReactNode, useState } from 'react';
+import { Entry, getEntriesByUserId } from '../database/entries';
 import { getUserBySessionToken, User } from '../database/users';
-
-const filterResultStyle = css`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 50px 10px;
-  width: 100vw;
-
-  .entryStyle {
-    display: flex;
-    flex-direction: column;
-    width: 800px;
-    background-color: gold;
-    flex-wrap: nowrap;
-  }
-
-  .imageAndText {
-    display: flex;
-    flex-direction: row;
-  }
-
-  textarea {
-    width: 600px;
-    text-decoration: none;
-  }
-  textarea:focus {
-    outline: 2px solid gold;
-  }
-
-  img {
-    opacity: 0.8;
-  }
-  input {
-    text-align: right;
-    font-size: 20px;
-  }
-  input:focus {
-    outline: 2px solid gold;
-  }
-  .moodStyle {
-    font-size: 35px;
-  }
-
-  .returnButton {
-    margin: 5px 0 0 735px;
-
-    button {
-      width: 60px;
-
-      font-size: 30px;
-      text-align: center;
-      letter-spacing: 4px;
-      background-color: transparent;
-      color: darkblue;
-
-      cursor: pointer;
-    }
-    button:hover {
-      color: white;
-      border-radius: 2px solid gold;
-      background-color: darkgrey;
-    }
-  }
-`;
-
-const filterStyle = css`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 50vw;
-  margin: 100px auto;
-  gap: 5px;
-
-  select {
-    width: 200px;
-    text-align: center;
-    font-size: 40px;
-    background-color: transparent;
-    border-radius: 10px;
-    cursor: pointer;
-    border: 2px solid grey;
-  }
-
-  select:focus {
-    outline: 1px solid gold;
-    border: 2px solid gold;
-  }
-
-  button {
-    width: 150px;
-    font-size: 20px;
-    letter-spacing: 4px;
-    background-color: black;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: gold;
-    color: black;
-    border-radius: 2px solid gold;
-  }
-`;
+import { filterStyle, filterStyleContainer } from '../utils/styles';
 
 const profileWrapper = css`
   display: flex;
@@ -196,16 +93,7 @@ export default function UserProfile(props: Props) {
         <meta name="description" content="Biography of the person" />
       </Head>
       <div css={profileWrapper}>
-        <Anchor
-          href="/logout"
-          entry={{
-            id: 0,
-            diaryContent: '',
-            mood: '',
-            dateEntry: '',
-            imageFile: '',
-          }}
-        >
+        <Anchor href="/logout" entry={[]}>
           LOGOUT
         </Anchor>
         <h1>
@@ -243,7 +131,8 @@ export default function UserProfile(props: Props) {
           FILTER
         </button>
       </div>
-      {entries
+      {[...entries]
+        .reverse()
         .filter((entry) => {
           let filter = true;
           if (moodFilter && entry.mood !== moodFilter) {
@@ -253,7 +142,7 @@ export default function UserProfile(props: Props) {
         })
         .map((filteredEntry) => {
           return (
-            <div key={filteredEntry.id} css={filterResultStyle}>
+            <div key={filteredEntry.id} css={filterStyleContainer}>
               <div className="entryStyle">
                 <input type="date" value={filteredEntry.dateEntry} />
                 <input

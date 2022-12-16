@@ -3,8 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { userAgent } from 'next/server';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Entry } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
 import { getUserBySessionToken, User } from '../../database/users';
@@ -142,12 +141,6 @@ export default function EntriesAdmin(props: Props) {
     setImageFile(file.secure_url);
   };
 
-  async function getEntriesFromApi() {
-    const response = await fetch('/api/entries');
-    const entriesFromApi = await response.json();
-
-    setEntries(entriesFromApi);
-  }
   async function createEntryFromApi() {
     const response = await fetch('/api/entries', {
       method: 'POST',
@@ -170,22 +163,6 @@ export default function EntriesAdmin(props: Props) {
 
     setEntries(newState);
     await router.push(`/entries`);
-  }
-
-  useEffect(() => {
-    getEntriesFromApi().catch((err) => {
-      console.log(err);
-    });
-  }, []);
-
-  if ('errors' in props) {
-    return (
-      <div>
-        {props.errors.map((error) => {
-          return <div key={error.message}>{error.message}</div>;
-        })}
-      </div>
-    );
   }
 
   return (
@@ -280,7 +257,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const session = token && (await getValidSessionByToken(token));
   const user = token && (await getUserBySessionToken(token));
-
 
   if (!session) {
     context.res.statusCode = 401;

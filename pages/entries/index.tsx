@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { Entry, getEntriesByUserId } from '../../database/entries';
 import { getValidSessionByToken } from '../../database/sessions';
 import { getUserBySessionToken } from '../../database/users';
@@ -104,13 +104,11 @@ const buttonContainer = css`
   }
 `;
 
-type Props =
-  | {
-      errors: { message: string }[];
-      csrfToken: undefined;
-      entries: Entry[];
-    }
-
+type Props = {
+  errors: { message: string }[];
+  csrfToken: undefined;
+  entries: Entry[];
+};
 
 export default function Entries(props: Props) {
   const [entries, setEntries] = useState<Entry[]>(props.entries);
@@ -119,14 +117,6 @@ export default function Entries(props: Props) {
   const [dateOnEditInput, setDateOnEditInput] = useState('');
   const [imageOnEditInput, setImageOnEditInput] = useState('');
   const [onEditId, setOnEditId] = useState<number | undefined>();
-
-  // async function getEntriesFromApi() {
-  //   const response = await fetch('/api/entries');
-  //   const entriesFromApi = await response.json();
-  //   const newSorting = [...entriesFromApi].reverse();
-
-  //   setEntries(newSorting);
-  // }
 
   async function deleteEntryFromApiById(id: number) {
     const response = await fetch(`/api/entries/${id}`, {
@@ -173,22 +163,6 @@ export default function Entries(props: Props) {
     setEntries(newState);
   }
 
-  // useEffect(() => {
-  //   getEntriesFromApi().catch((err) => {
-  //     console.log(err);
-  //   });
-  // }, []);
-
-  if ('errors' in props) {
-    return (
-      <div>
-        {props.errors.map((error) => {
-          return <div key={error.message}>{error.message}</div>;
-        })}
-      </div>
-    );
-  }
-
   return (
     <div>
       <Head>
@@ -198,7 +172,7 @@ export default function Entries(props: Props) {
       <div css={entryStyle}>
         <h1>⑉ Overview of my entries ⑉</h1>
 
-        {entries.map((entry) => {
+        {[...entries].reverse().map((entry) => {
           const isEntryOnEdit = onEditId === entry.id;
 
           return (

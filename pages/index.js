@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const mainContainer = css`
   background: #202731;
@@ -89,6 +88,7 @@ const quoteContainer = css`
     }
   }
 `;
+
 
 export default function Home() {
   return (
