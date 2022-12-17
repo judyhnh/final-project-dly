@@ -71,19 +71,14 @@ export default function EntriesAdmin(props: Props) {
   const today = new Date();
   const { currentCount } = useStreak(localStorage, today);
 
-  async function checkStreak() {
-    if (
-      currentCount > 2 &&
-      moodInput === '🥲' &&
-      currentCount > 1 &&
-      moodInput === '🥲'
-    ) {
+  function checkStreak() {
+    if (moodInput === '🥲' && (currentCount > 1 || currentCount > 2)) {
       alert(
         'Oh, no! Your mood has been down for two consecutive days. Here is a serotonin booster!',
       );
       window.location.replace('https://unsplash.com/s/photos/cute-dogs');
     } else {
-      return 0;
+      return currentCount;
     }
   }
 
@@ -164,7 +159,7 @@ export default function EntriesAdmin(props: Props) {
         <button
           onClick={async () => {
             await createEntryFromApi();
-            await checkStreak();
+            checkStreak();
           }}
         >
           <Image src="/edConfirm.svg" alt="tick" width="40" height="40" />

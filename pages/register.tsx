@@ -6,16 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { getValidSessionByToken } from '../database/sessions';
+import { errorStyle, formContainer, mainWrapper } from '../utils/styles';
 import { RegisterResponseBody } from './api/register';
-
-const mainWrapper = css`
-  width: 100vw;
-  height: 500px;
-  background-color: rgba(255, 215, 0, 0.5);
-  margin-top: 100px;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 25px 50px -12px;
-  border: 3px solid black;
-`;
 
 const registerWrapper = css`
   display: grid;
@@ -41,10 +33,7 @@ const textSide = css`
   letter-spacing: 2px;
   border-radius: 20px;
 `;
-const arrowRight = css`
-  grid-area: arrow;
-  margin-top: 150px;
-`;
+
 const imageLeft = css`
   grid-area: image;
 `;
@@ -52,7 +41,6 @@ const imageLeft = css`
 const registerStyleRight = css`
   margin: 0 400px 0 auto;
   grid-area: side;
-
   p {
     margin-left: 5px;
   }
@@ -69,73 +57,6 @@ const registerStyleRight = css`
   }
 `;
 
-const formContainer = css`
-  display: flex;
-  flex-direction: column;
-  border: 3px solid black;
-  padding: 50px 0;
-  margin: 0 auto;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-
-  width: 300px;
-  background-color: #fff;
-  background-image: linear-gradient(
-      90deg,
-      transparent 79px,
-      #abced4 79px,
-      #abced4 81px,
-      transparent 81px
-    ),
-    linear-gradient(#eee 0.1em, transparent 0.1em);
-  background-size: 100% 1.2em;
-
-  .formStyle {
-    flex-direction: column;
-    display: flex;
-  }
-  input {
-    margin: 10px 0 10px 10px;
-    display: inline-block;
-    height: 30px;
-    border: 2px dashed black;
-    font-size: 15px;
-    background: transparent;
-  }
-  input:focus {
-    outline: 2px solid gold;
-  }
-
-  label {
-    display: inline-block;
-    flex-direction: column;
-    align-self: center;
-  }
-
-  button {
-    margin-top: 50px;
-    height: 40px;
-    font-size: 13px;
-    font-weight: bold;
-    letter-spacing: 4px;
-    color: white;
-    background-color: black;
-    border: 3px solid white;
-    cursor: pointer;
-  }
-  button:hover {
-    border: 3px solid gold;
-    color: gold;
-  }
-`;
-
-const errorStyle = css`
-  background-color: white;
-  color: red;
-  letter-spacing: 3px;
-  text-align: center;
-  margin-top: 30px;
-  width: 300px;
-`;
 type Props = {
   refreshUserProfile: () => Promise<void>;
 };
