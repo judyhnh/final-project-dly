@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -12,7 +11,6 @@ import { createTokenFromSecret } from '../../utils/csrf';
 import { contentStyle, entryWrapper } from '../../utils/styles';
 
 type Props = {
-  errors: { message: string }[];
   csrfToken: undefined;
   cloudinaryAPI: string | undefined;
   user: User;
@@ -34,7 +32,7 @@ export default function EntriesAdmin(props: Props) {
     formData.append('upload_preset', 'daily_images');
 
     const response = await fetch(
-      `	https://api.cloudinary.com/v1_1/doaftjyzk/upload`,
+      `	https://api.cloudinary.com/v1_1/${props.cloudinaryAPI}/upload`,
       {
         method: 'POST',
         body: formData,

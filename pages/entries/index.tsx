@@ -1,4 +1,3 @@
-import { css } from '@emotion/react';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -10,7 +9,6 @@ import { createTokenFromSecret } from '../../utils/csrf';
 import { buttonContainer, entryStyle, imageAndText } from '../../utils/styles';
 
 type Props = {
-  errors: { message: string }[];
   csrfToken: undefined;
   entries: Entry[];
 };

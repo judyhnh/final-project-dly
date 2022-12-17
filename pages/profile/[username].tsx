@@ -5,10 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getUserByUsername, User } from '../../database/users';
 
-type Props = {
-  user?: User;
-};
-
 const errorWrapper = css`
   display: flex;
   margin-top: 150px;
@@ -47,6 +43,10 @@ const contentStyle = css`
     color: blue;
   }
 `;
+
+type Props = {
+  user?: User;
+};
 
 export default function UserProfile(props: Props) {
   if (!props.user) {
